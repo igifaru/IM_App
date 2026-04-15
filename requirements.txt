@@ -1,0 +1,9 @@
+pandas
+numpy
+scikit-learn
+pyreadstat
+matplotlib
+seaborn
+nbformat
+ipykernel
+anthropic
