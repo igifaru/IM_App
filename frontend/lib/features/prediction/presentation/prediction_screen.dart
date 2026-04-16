@@ -4,7 +4,9 @@ import 'package:animations/animations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../logic/prediction_provider.dart';
 import 'widgets/prediction_form.dart';
-import 'widgets/result_view.dart';
+import 'widgets/smart_result_view.dart';
+import '../../../../shared/widgets/error_dialog.dart';
+import '../../../../shared/widgets/loading_overlay.dart';
 
 class PredictionScreen extends StatefulWidget {
   const PredictionScreen({super.key});
@@ -14,153 +16,113 @@ class PredictionScreen extends StatefulWidget {
 }
 
 class _PredictionScreenState extends State<PredictionScreen> {
+  late PredictionProvider _provider;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<PredictionProvider>();
-      provider.fetchMetadata();
-      
-      // Error Listener
-      provider.addListener(() {
-        if (provider.error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(provider.error!.message.tr()),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      });
+      _provider = context.read<PredictionProvider>();
+      _provider.fetchMetadata();
+      _setupErrorListener();
     });
+  }
+
+  void _setupErrorListener() {
+    _provider.addListener(() {
+      if (_provider.error != null && mounted) {
+        _showErrorDialog();
+      }
+    });
+  }
+
+  void _showErrorDialog() {
+    ErrorDialog.show(
+      context,
+      title: _getErrorTitle(_provider.error!.message),
+      message: _provider.error!.message.tr(),
+      referenceId: _provider.errorReferenceId,
+      onRetry: () {
+        Navigator.pop(context);
+        _provider.reset();
+      },
+    );
+  }
+
+  String _getErrorTitle(String errorCode) {
+    switch (errorCode) {
+      case 'rate_limit_exceeded':
+        return 'error_rate_limit'.tr();
+      case 'authentication_failed':
+        return 'error_auth'.tr();
+      case 'request_timeout':
+        return 'error_timeout'.tr();
+      case 'network_error':
+        return 'error_network'.tr();
+      case 'server_error':
+        return 'error_server'.tr();
+      default:
+        return 'error_title'.tr();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PredictionProvider>();
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
+    // Dynamic title based on current view
+    final isResultView = provider.farmerChoice != null;
+    final titleKey = isResultView ? 'result_title' : 'form_title';
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          titleKey.tr(),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black.withOpacity(0.87),
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: isDarkMode 
+            ? Theme.of(context).scaffoldBackgroundColor 
+            : Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+      ),
       body: Stack(
         children: [
-          // Background Gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-              ),
-            ),
-          ),
-          
           SafeArea(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                Expanded(
-                  child: PageTransitionSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-                      return SharedAxisTransition(
-                        animation: primaryAnimation,
-                        secondaryAnimation: secondaryAnimation,
-                        transitionType: SharedAxisTransitionType.horizontal,
-                        child: child,
-                      );
-                    },
-                    child: provider.recommendedCrop != null
-                        ? ResultView(
-                            crop: provider.recommendedCrop!,
-                            advice: provider.advice ?? '',
-                            onReset: provider.reset,
-                          )
-                        : const PredictionForm(),
-                  ),
-                ),
-              ],
+            child: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+                return SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.horizontal,
+                  child: child,
+                );
+              },
+              child: provider.farmerChoice != null
+                  ? SmartResultView(
+                      farmerChoice: provider.farmerChoice!,
+                      topRecommendations: provider.topRecommendations,
+                      aiInterpretation: provider.aiInterpretation,
+                      onReset: provider.reset,
+                    )
+                  : const PredictionForm(),
             ),
           ),
-          
+          // Loading Overlay
           if (provider.isLoading)
-            Container(
-              color: Colors.black45,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(color: Colors.white),
-                    const SizedBox(height: 16),
-                    Text(
-                      'loading'.tr(),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
+            LoadingOverlay(
+              isLoading: true,
+              message: 'analyzing_farm_conditions'.tr(),
+              child: const SizedBox.shrink(),
             ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'app_title'.tr(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -1,
-                  ),
-                ),
-                Text(
-                  'app_subtitle'.tr(),
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          _buildLanguageSelector(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLanguageSelector(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: DropdownButton<Locale>(
-        value: context.locale,
-        underline: const SizedBox(),
-        dropdownColor: const Color(0xFF1B5E20),
-        icon: const Icon(Icons.language, color: Colors.white, size: 20),
-        items: const [
-          DropdownMenuItem(value: Locale('en'), child: Text('EN', style: TextStyle(color: Colors.white))),
-          DropdownMenuItem(value: Locale('fr'), child: Text('FR', style: TextStyle(color: Colors.white))),
-          DropdownMenuItem(value: Locale('rw'), child: Text('RW', style: TextStyle(color: Colors.white))),
-        ],
-        onChanged: (Locale? locale) {
-          if (locale != null) {
-            context.setLocale(locale);
-          }
-        },
       ),
     );
   }
