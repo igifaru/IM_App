@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:intl/intl.dart';
 import '../../prediction/logic/prediction_provider.dart';
 import '../../../shared/widgets/common/custom_card.dart';
 import '../../../shared/widgets/common/empty_state.dart';
@@ -54,7 +55,7 @@ class HistoryScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item.cropName,
+                                item.cropName.tr(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -64,14 +65,21 @@ class HistoryScreen extends StatelessWidget {
                               Text(
                                 DateFormat.yMMMd().add_jm().format(item.timestamp),
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                                   fontSize: 12,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.chevron_right, color: Colors.grey),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[600]
+                              : Colors.grey,
+                        ),
                       ],
                     ),
                   ),

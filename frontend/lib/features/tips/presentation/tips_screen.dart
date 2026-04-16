@@ -13,42 +13,40 @@ class TipsScreen extends StatelessWidget {
         children: [
           _buildTipCategory(
             context,
-            title: 'Cereals (Ibinyampeke)',
+            title: 'cat_cereals'.tr(),
             icon: Icons.grass,
             tips: [
-              'Plant maize at the beginning of the rainy season.',
-              'Ensure proper spacing (25-30cm) for optimal growth.',
-              'Apply top-dressing fertilizer when maize is knee-high.'
+              'tips_maize_timing'.tr(),
+              'tips_spacing'.tr(),
+              'tips_fertilizer'.tr(),
             ],
           ),
           _buildTipCategory(
             context,
-            title: 'Legumes (Ibinyamavuta)',
+            title: 'cat_legumes'.tr(),
             icon: Icons.eco,
             tips: [
-              'Beans prefer well-drained soil.',
-              'Use improved climbing bean seeds for higher yields.',
-              'Rotate legumes with cereals to restore soil nitrogen.'
+              'tips_beans_soil'.tr(),
+              'tips_rotation'.tr(),
             ],
           ),
           _buildTipCategory(
             context,
-            title: 'Roots & Tubers (Ibirayi/Imyumbati)',
+            title: 'cat_roots'.tr(),
             icon: Icons.waves,
             tips: [
-              'Irish potatoes need hilling (earthing up) twice.',
-              'Protect crops from late blight using recommended sprays.',
-              'Harvest cassava only when mature for better taste.'
+              'tips_potato_hill'.tr(),
+              'tips_blight'.tr(),
             ],
           ),
           _buildTipCategory(
             context,
-            title: 'General Best Practices',
+            title: 'tips_general_title'.tr(),
             icon: Icons.verified_user,
             tips: [
-              'Always use organic manure alongside inorganic fertilizers.',
-              'Control erosion by planting agroforestry trees or creating terraces.',
-              'Apply lime to acidic soils at least 2 weeks before planting.'
+              'tips_manure'.tr(),
+              'tips_erosion'.tr(),
+              'tips_lime'.tr(),
             ],
           ),
         ],
@@ -57,16 +55,20 @@ class TipsScreen extends StatelessWidget {
   }
 
   Widget _buildTipCategory(BuildContext context, {required String title, required IconData icon, required List<String> tips}) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDarkMode ? Theme.of(context).cardColor : Colors.white;
+    final borderColor = isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey[200];
+
     return Card(
       margin: const EdgeInsets.only(bottom: 24),
       elevation: 0,
-      color: Colors.white,
+      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey[200]!),
+        side: BorderSide(color: borderColor!),
       ),
       child: ExpansionTile(
-        leading: Icon(icon, color: Colors.green),
+        leading: Icon(icon, color: Theme.of(context).primaryColor),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         children: [
           Padding(
@@ -77,7 +79,7 @@ class TipsScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
                     Expanded(child: Text(tip, style: const TextStyle(height: 1.4))),
                   ],
                 ),
