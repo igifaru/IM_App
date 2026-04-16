@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/location/services/administrative_service.dart';
 
 class HierarchicalLocationPicker extends StatefulWidget {
@@ -50,7 +51,7 @@ class _HierarchicalLocationPickerState extends State<HierarchicalLocationPicker>
     return Column(
       children: [
         _buildDropdown(
-          label: 'Province',
+          label: 'province_label'.tr(),
           value: _selectedProvince,
           items: adminService.provinces,
           onChanged: (val) {
@@ -64,7 +65,7 @@ class _HierarchicalLocationPickerState extends State<HierarchicalLocationPicker>
         ),
         const SizedBox(height: 16),
         _buildDropdown(
-          label: 'District',
+          label: 'district_label'.tr(),
           value: _selectedDistrict,
           items: _selectedProvince != null ? adminService.getDistricts(_selectedProvince!) : [],
           enabled: _selectedProvince != null,
@@ -78,7 +79,7 @@ class _HierarchicalLocationPickerState extends State<HierarchicalLocationPicker>
         ),
         const SizedBox(height: 16),
         _buildDropdown(
-          label: 'Sector',
+          label: 'sector_label'.tr(),
           value: _selectedSector,
           items: (_selectedProvince != null && _selectedDistrict != null)
               ? adminService.getSectors(_selectedProvince!, _selectedDistrict!)
@@ -100,25 +101,88 @@ class _HierarchicalLocationPickerState extends State<HierarchicalLocationPicker>
     required ValueChanged<String?> onChanged,
     bool enabled = true,
   }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDarkMode ? Colors.white : Colors.black.withOpacity(0.87);
+    final hintColor = isDarkMode ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.54);
+    final fillColor = isDarkMode
+        ? const Color(0xFF232529).withOpacity(0.7)
+        : Colors.grey[100];
+    final disabledFillColor = isDarkMode
+        ? const Color(0xFF232529).withOpacity(0.4)
+        : Colors.grey[50];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: hintColor,
+          ),
+        ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           isExpanded: true,
+          dropdownColor: isDarkMode ? const Color(0xFF232529) : Colors.white,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: enabled ? Colors.grey[100] : Colors.grey[50],
-            border: OutlineInputBorder(
+            fillColor: enabled ? fillColor : disabledFillColor,
+            enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.15)
+                    : Colors.black.withOpacity(0.1),
+                width: 1.5,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDarkMode
+                    ? Colors.white.withOpacity(0.08)
+                    : Colors.black.withOpacity(0.05),
+                width: 1.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor,
+                width: 2,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            prefixIcon: Icon(
+              Icons.location_on_rounded,
+              color: Theme.of(context).primaryColor.withOpacity(0.6),
+              size: 20,
+            ),
           ),
-          hint: Text(enabled ? 'Select $label' : 'Select previous level first'),
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          hint: Text(
+            enabled ? 'Select $label' : 'Select previous level first',
+            style: TextStyle(color: hintColor),
+          ),
+          items: items
+              .map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(
+                      e,
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ))
+              .toList(),
           onChanged: enabled ? onChanged : null,
         ),
       ],

@@ -22,6 +22,7 @@ class _AdministrativeMapState extends State<AdministrativeMap> {
   List<MapRegion> _provinces = [];
   List<MapRegion> _districts = [];
   bool _isLoading = true;
+  bool _isMapReady = false;
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _AdministrativeMapState extends State<AdministrativeMap> {
   }
 
   void _fitBounds() {
-    if (_isLoading) return;
+    if (_isLoading || !_isMapReady) return;
 
     MapRegion? target;
     double zoom = 9.2;
@@ -94,10 +95,11 @@ class _AdministrativeMapState extends State<AdministrativeMap> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
+      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
       return Container(
         height: 300,
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: isDarkMode ? const Color(0xFF232529) : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Center(child: CircularProgressIndicator()),
@@ -119,10 +121,14 @@ class _AdministrativeMapState extends State<AdministrativeMap> {
         borderRadius: BorderRadius.circular(20),
         child: FlutterMap(
           mapController: _mapController,
-          options: const MapOptions(
-            initialCenter: LatLng(-1.9403, 30.05),
+          options: MapOptions(
+            initialCenter: const LatLng(-1.9403, 30.05),
             initialZoom: 9.2,
-            interactionOptions: InteractionOptions(
+            onMapReady: () {
+              setState(() => _isMapReady = true);
+              _fitBounds();
+            },
+            interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
             ),
           ),
@@ -130,6 +136,7 @@ class _AdministrativeMapState extends State<AdministrativeMap> {
             TileLayer(
               urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               subdomains: const ['a', 'b', 'c'],
+              userAgentPackageName: 'com.antigravity.im_app.igisubizo_muhinzi',
             ),
             PolygonLayer(
               polygons: _provinces.expand((region) => region.polygons.map((points) => Polygon(
