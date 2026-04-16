@@ -1,0 +1,73 @@
+# ============================================================================
+# Igisubizo Muhinzi - Standardized Production .gitignore
+# ============================================================================
+
+# Environments & Virtual Envs
+.env
+.venv
+env/
+venv/
+**/venv/
+**/env/
+backend/venv/
+backend/env/
+
+# Python - Core
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+# lib/  <-- DO NOT UNCOMMENT: This will ignore Flutter source!
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Flutter - Core
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/build/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/ephemeral/
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+Thumbs.db
+.directory
+.history/
+.kiro/  # Added based on research
+
+# ML & Data (Optional: Keep if you want models in repo, else uncomment)
+# *.pkl
+# *.sav
+# *.dta
+# data/
+
+# Logs
+*.log
+pip-log.txt
