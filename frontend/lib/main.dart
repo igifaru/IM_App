@@ -35,18 +35,21 @@ class IgisubizoMuhinziApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.watch<PredictionProvider>().themeMode;
+    
     return MaterialApp(
       title: 'Igisubizo Muhinzi',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       localizationsDelegates: [
         ...context.localizationDelegates,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         RwMaterialLocalizations.delegate,
+        RwCupertinoLocalizations.delegate,
       ],
       supportedLocales: context.supportedLocales,
       locale: context.locale,

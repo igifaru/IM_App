@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -182,7 +183,6 @@ class RwMaterialLocalizations extends GlobalMaterialLocalizations {
   @override
   String get collapsedDrawerMenuLabel => 'Menu yifunze';
 
-  // Missing Members from logs
   @override
   ScriptCategory get scriptCategory => ScriptCategory.englishLike;
 
@@ -278,24 +278,6 @@ class RwMaterialLocalizations extends GlobalMaterialLocalizations {
 
   @override
   String get unspecifiedDateRange => 'Igihe kitazwi';
-
-  static Future<MaterialLocalizations> load(Locale locale) {
-    return SynchronousFuture<MaterialLocalizations>(
-      RwMaterialLocalizations(
-        fullYearFormat: intl.DateFormat.y(),
-        compactDateFormat: intl.DateFormat.yMd(),
-        shortDateFormat: intl.DateFormat.yMMMd(),
-        mediumDateFormat: intl.DateFormat.yMMMMd(),
-        longDateFormat: intl.DateFormat.yMMMMEEEEd(),
-        yearMonthFormat: intl.DateFormat.yMMM(),
-        shortMonthDayFormat: intl.DateFormat.MMMd(),
-        decimalFormat: intl.NumberFormat.decimalPattern(),
-        twoDigitZeroPaddedFormat: intl.NumberFormat('00'),
-      ),
-    );
-  }
-
-  static const LocalizationsDelegate<MaterialLocalizations> delegate = _RwLocalizationsDelegate();
 
   @override
   String get calendarModeButtonLabelRaw => 'Guhindura uburyo bwa kalendari';
@@ -509,10 +491,187 @@ class RwMaterialLocalizations extends GlobalMaterialLocalizations {
 
   @override
   String get shareButtonLabel => 'Sangiza';
+
+  static Future<MaterialLocalizations> load(Locale locale) {
+    return SynchronousFuture<MaterialLocalizations>(
+      RwMaterialLocalizations(
+        fullYearFormat: intl.DateFormat.y(),
+        compactDateFormat: intl.DateFormat.yMd(),
+        shortDateFormat: intl.DateFormat.yMMMd(),
+        mediumDateFormat: intl.DateFormat.yMMMMd(),
+        longDateFormat: intl.DateFormat.yMMMMEEEEd(),
+        yearMonthFormat: intl.DateFormat.yMMM(),
+        shortMonthDayFormat: intl.DateFormat.MMMd(),
+        decimalFormat: intl.NumberFormat.decimalPattern(),
+        twoDigitZeroPaddedFormat: intl.NumberFormat('00'),
+      ),
+    );
+  }
+
+  static const LocalizationsDelegate<MaterialLocalizations> delegate = _RwMaterialLocalizationsDelegate();
 }
 
-class _RwLocalizationsDelegate extends LocalizationsDelegate<MaterialLocalizations> {
-  const _RwLocalizationsDelegate();
+class RwCupertinoLocalizations extends GlobalCupertinoLocalizations {
+  const RwCupertinoLocalizations({
+    required String localeName,
+    required intl.DateFormat fullYearFormat,
+    required intl.DateFormat dayFormat,
+    required intl.DateFormat mediumDateFormat,
+    required intl.DateFormat singleDigitHourFormat,
+    required intl.DateFormat singleDigitMinuteFormat,
+    required intl.DateFormat doubleDigitMinuteFormat,
+    required intl.DateFormat singleDigitSecondFormat,
+    required intl.DateFormat weekdayFormat,
+    required intl.NumberFormat decimalFormat,
+  }) : super(
+          localeName: localeName,
+          fullYearFormat: fullYearFormat,
+          dayFormat: dayFormat,
+          mediumDateFormat: mediumDateFormat,
+          singleDigitHourFormat: singleDigitHourFormat,
+          singleDigitMinuteFormat: singleDigitMinuteFormat,
+          doubleDigitMinuteFormat: doubleDigitMinuteFormat,
+          singleDigitSecondFormat: singleDigitSecondFormat,
+          weekdayFormat: weekdayFormat,
+          decimalFormat: decimalFormat,
+        );
+
+  @override
+  String get alertDialogLabel => 'Ikitonderwa';
+
+  @override
+  String get anteMeridiemAbbreviation => 'AM';
+
+  @override
+  String get copyButtonLabel => 'Koporora';
+
+  @override
+  String get cutButtonLabel => 'Kata';
+
+  @override
+  String get modalBarrierDismissLabel => 'Funga';
+
+  @override
+  String get pasteButtonLabel => 'Namata';
+
+  @override
+  String get postMeridiemAbbreviation => 'PM';
+
+  @override
+  String get selectAllButtonLabel => 'Hitamo byose';
+
+  @override
+  String get tabSemanticsLabelRaw => r'Tab $tabIndex kuri $tabCount';
+
+  @override
+  String get timerPickerHourLabelOther => 'isaha';
+
+  @override
+  String get timerPickerMinuteLabelOther => 'iminota';
+
+  @override
+  String get timerPickerSecondLabelOther => 'isagonda';
+
+  @override
+  String get timerPickerHourLabelOne => 'isaha';
+
+  @override
+  String get timerPickerMinuteLabelOne => 'iminota';
+
+  @override
+  String get timerPickerSecondLabelOne => 'isagonda';
+
+  @override
+  String get datePickerHourSemanticsLabelOther => r'$hour amasaha';
+
+  @override
+  String get datePickerMinuteSemanticsLabelOther => r'$minute iminota';
+
+  @override
+  String get datePickerDayOfMonthSemanticsLabelOther => r'$day';
+
+  @override
+  String get datePickerMonthSemanticsLabelOther => r'$month';
+
+  @override
+  String get datePickerYearSemanticsLabelOther => r'$year';
+
+  @override
+  String get searchTextFieldPlaceholderLabel => 'Shakisha';
+
+  @override
+  String get todayLabel => 'Uyu munsi';
+
+  @override
+  String get lookUpButtonLabel => 'Shakisha';
+
+  @override
+  String get menuDismissLabel => 'Funga';
+
+  @override
+  String get searchWebButtonLabel => 'Shakisha kuri web';
+
+  @override
+  String get shareButtonLabel => 'Sangiza';
+
+  @override
+  String get backButtonLabel => 'Subira';
+
+  @override
+  String get cancelButtonLabel => 'Hagarika';
+
+  @override
+  String get clearButtonLabel => 'Siba';
+
+  @override
+  String get collapsedHint => 'Yifunze';
+
+  @override
+  String get expandedHint => 'Yagutse';
+
+  @override
+  String get expansionTileCollapsedHint => 'Kanda kabiri kugira ngo wagure';
+
+  @override
+  String get expansionTileCollapsedTapHint => 'Yagura kugira ngo ubone andi makuru';
+
+  @override
+  String get expansionTileExpandedHint => 'Kanda kabiri kugira ngo ufunye';
+
+  @override
+  String get expansionTileExpandedTapHint => 'Funya';
+
+  @override
+  String get noSpellCheckReplacementsLabel => 'Nta kintu cyabonetse';
+
+  @override
+  String get datePickerDateOrderString => 'dmy';
+
+  @override
+  String get datePickerDateTimeOrderString => 'date_time';
+
+  static Future<CupertinoLocalizations> load(Locale locale) {
+    return SynchronousFuture<CupertinoLocalizations>(
+      RwCupertinoLocalizations(
+        localeName: 'rw',
+        fullYearFormat: intl.DateFormat.y(),
+        dayFormat: intl.DateFormat.d(),
+        mediumDateFormat: intl.DateFormat.yMMMMd(),
+        singleDigitHourFormat: intl.DateFormat('H'),
+        singleDigitMinuteFormat: intl.DateFormat('m'),
+        doubleDigitMinuteFormat: intl.DateFormat('mm'),
+        singleDigitSecondFormat: intl.DateFormat('s'),
+        weekdayFormat: intl.DateFormat.E(),
+        decimalFormat: intl.NumberFormat.decimalPattern(),
+      ),
+    );
+  }
+
+  static const LocalizationsDelegate<CupertinoLocalizations> delegate = _RwCupertinoLocalizationsDelegate();
+}
+
+class _RwMaterialLocalizationsDelegate extends LocalizationsDelegate<MaterialLocalizations> {
+  const _RwMaterialLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) => locale.languageCode == 'rw';
@@ -521,5 +680,18 @@ class _RwLocalizationsDelegate extends LocalizationsDelegate<MaterialLocalizatio
   Future<MaterialLocalizations> load(Locale locale) => RwMaterialLocalizations.load(locale);
 
   @override
-  bool shouldReload(_RwLocalizationsDelegate old) => false;
+  bool shouldReload(_RwMaterialLocalizationsDelegate old) => false;
+}
+
+class _RwCupertinoLocalizationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+  const _RwCupertinoLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => locale.languageCode == 'rw';
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) => RwCupertinoLocalizations.load(locale);
+
+  @override
+  bool shouldReload(_RwCupertinoLocalizationsDelegate old) => false;
 }
