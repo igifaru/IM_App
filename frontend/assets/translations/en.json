@@ -113,5 +113,11 @@
   "error_auth": "Authentication Failed",
   "error_timeout": "Request Timeout",
   "error_server": "Server Error",
-  "Partly Cloudy": "Partly Cloudy"
+  "Partly Cloudy": "Partly Cloudy",
+  "settings": "Settings",
+  "appearance": "Appearance",
+  "dark_mode": "Dark Mode",
+  "dark_mode_on": "Dark theme enabled",
+  "dark_mode_off": "Light theme enabled",
+  "language": "Language"
 }

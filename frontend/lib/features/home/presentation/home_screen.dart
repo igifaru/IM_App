@@ -19,16 +19,6 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('app_title'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            icon: Icon(provider.themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () => provider.toggleTheme(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () => _showLanguageDialog(context),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -61,7 +51,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1B5E20).withOpacity(0.3),
+              color: const Color(0xFF1B5E20).withValues(alpha:0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             )
@@ -136,7 +126,7 @@ class HomeScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
       child: CustomCard(
-        color: isDark ? Colors.amber[900]?.withOpacity(0.2) : Colors.amber[50],
+        color: isDark ? Colors.amber[900]?.withValues(alpha:0.2) : Colors.amber[50],
         onTap: () {
           final mainState = context.findAncestorStateOfType<MainScreenState>();
           mainState?.setTab(3); // Switch to Calendar tab
@@ -225,7 +215,7 @@ class HomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha:0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 28),
@@ -272,7 +262,7 @@ class HomeScreen extends StatelessWidget {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha:0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.grass, color: Colors.green),
@@ -309,7 +299,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Inama ku buhinzi bwawe',
-                    style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+                    style: TextStyle(color: Colors.white.withValues(alpha:0.9), fontSize: 14),
                   ),
                 ],
               ),
@@ -321,33 +311,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Ururimi', textAlign: TextAlign.center),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildLanguageOption(context, 'English', const Locale('en')),
-            _buildLanguageOption(context, 'Français', const Locale('fr')),
-            _buildLanguageOption(context, 'Kinyarwanda', const Locale('rw')),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageOption(BuildContext context, String title, Locale locale) {
-    final isSelected = context.locale == locale;
-    return ListTile(
-      title: Text(title, style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-      trailing: isSelected ? Icon(Icons.check_circle, color: Theme.of(context).primaryColor) : null,
-      onTap: () {
-        context.setLocale(locale);
-        Navigator.pop(context);
-      },
-    );
-  }
 }

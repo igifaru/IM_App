@@ -113,5 +113,11 @@
   "error_auth": "Ikosa ryo Kwemeza",
   "error_timeout": "Igihe Cyarangiye",
   "error_server": "Ikosa rya Seriveri",
-  "Partly Cloudy": "Ibicu Bike"
+  "Partly Cloudy": "Ibicu Bike",
+  "settings": "Igenamiterere",
+  "appearance": "Isura",
+  "dark_mode": "Uburyo bw'Ijoro",
+  "dark_mode_on": "Uburyo bw'ijoro burakoreshwa",
+  "dark_mode_off": "Uburyo bw'umunsi burakoreshwa",
+  "language": "Ururimi"
 }

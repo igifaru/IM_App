@@ -113,5 +113,11 @@
   "error_auth": "Échec d'Authentification",
   "error_timeout": "Délai d'Attente Dépassé",
   "error_server": "Erreur Serveur",
-  "Partly Cloudy": "Partiellement Nuageux"
+  "Partly Cloudy": "Partiellement Nuageux",
+  "settings": "Paramètres",
+  "appearance": "Apparence",
+  "dark_mode": "Mode Sombre",
+  "dark_mode_on": "Thème sombre activé",
+  "dark_mode_off": "Thème clair activé",
+  "language": "Langue"
 }

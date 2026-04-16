@@ -4,6 +4,7 @@ import '../../home/presentation/home_screen.dart';
 import '../../prediction/presentation/prediction_screen.dart';
 import '../../history/presentation/history_screen.dart';
 import '../../calendar/presentation/calendar_screen.dart';
+import '../../settings/presentation/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,6 +21,7 @@ class MainScreenState extends State<MainScreen> {
     const PredictionScreen(),
     const HistoryScreen(),
     const CalendarScreen(),
+    const SettingsScreen(),
   ];
 
   void setTab(int index) {
@@ -39,7 +41,7 @@ class MainScreenState extends State<MainScreen> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -71,6 +73,11 @@ class MainScreenState extends State<MainScreen> {
                 icon: const Icon(Icons.calendar_month_outlined),
                 activeIcon: const Icon(Icons.calendar_month),
                 label: 'calendar'.tr(),
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.settings_outlined),
+                activeIcon: const Icon(Icons.settings),
+                label: 'settings'.tr(),
               ),
             ],
           ),
