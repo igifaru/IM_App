@@ -33,7 +33,7 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
-.installed.cfg
+.installed.cfgplease remove this welcome or redesign it to be looking professional to be in the center, and remove that bolder radius in the right
 *.egg
 MANIFEST
 
