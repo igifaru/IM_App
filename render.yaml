@@ -3,7 +3,7 @@ services:
     name: igisubizo-muhinzi-api
     runtime: python
     # Root is repo root so Render has access to both backend/ and models/
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --prefer-binary -r requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     plan: free
     region: frankfurt
