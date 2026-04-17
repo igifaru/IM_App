@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: igisubizo-muhinzi-api
+    runtime: python
+    # Root is repo root so Render has access to both backend/ and models/
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PROJECT_NAME
+        value: Igisubizo Muhinzi API
+      - key: VERSION
+        value: 1.0.0
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: BACKEND_CORS_ORIGINS
+        value: "*"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: LOG_FORMAT
+        value: json
+      - key: MODEL_PATH
+        value: models/crop_model_seasonal.pkl
+      - key: ENCODER_PATH
+        value: models/encoders_seasonal.pkl
+      - key: CONFIDENCE_THRESHOLD
+        value: "0.3"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "100"
+      - key: REQUEST_TIMEOUT_SECONDS
+        value: "30"
+      - key: MAX_REQUEST_SIZE_KB
+        value: "10"
+      - key: GROQ_API_KEY
+        sync: false

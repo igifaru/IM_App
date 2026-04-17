@@ -2,8 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiClient {
-  // Use localhost for Web, 10.0.2.2 for Android Emulator
-  static const String baseUrl = kIsWeb ? 'http://localhost:8000/api/v1' : 'http://10.0.2.2:8000/api/v1';
+  // Dev: localhost (web) / 10.0.2.2 (Android emulator)
+  // Prod: pass --dart-define=API_URL=https://your-app.onrender.com/api/v1 at build time
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: kIsWeb
+        ? 'http://localhost:8000/api/v1'
+        : 'http://10.0.2.2:8000/api/v1',
+  );
   static const String apiKey = 'mobile-app-key'; // Default API key for mobile app
   
   final Dio _dio = Dio(BaseOptions(

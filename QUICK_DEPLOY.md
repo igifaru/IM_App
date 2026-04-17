@@ -1,284 +1,154 @@
-# 🚀 Quick Deployment Guide - Igisubizo Muhinzi
+# Quick Deployment Guide - Igisubizo Muhinzi
 
-## ⚡ 15-Minute Deployment
+## Deployment Stack
 
-### Prerequisites
-- GitHub account
-- Koyeb account (free): https://app.koyeb.com/
+| Layer | Platform | URL |
+|-------|----------|-----|
+| Backend + Models | Render | `https://igisubizo-muhinzi-api.onrender.com` |
+| Frontend (Web) | Vercel | `https://igisubizo-muhinzi.vercel.app` |
+| Mobile (Android) | GitHub Releases / Play Store | APK / AAB |
+
+## Prerequisites
+- GitHub account with this repo pushed
+- Render account (free): https://render.com/
+- Vercel account (free): https://vercel.com/
 - Groq API key (free): https://console.groq.com/
-- Flutter SDK installed (for mobile app)
 
 ---
 
-## Step 1: Deploy Backend to Koyeb (5 minutes)
+## Project Structure
 
-### 1.1 Push Code to GitHub
-```bash
-# If not already done
-git remote add origin https://github.com/YOUR_USERNAME/igisubizo-muhinzi.git
-git push -u origin main
 ```
-
-### 1.2 Deploy on Koyeb
-
-1. **Go to Koyeb**: https://app.koyeb.com/
-2. **Click "Create Service"**
-3. **Select "GitHub"** as deployment method
-4. **Connect your repository**
-5. **Configure Service**:
-   - **Name**: `igisubizo-muhinzi-api`
-   - **Branch**: `main`
-   - **Build path**: `backend`
-   - **Builder**: Buildpack
-   - **Build command**: (leave empty, auto-detected)
-   - **Run command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-
-6. **Add Environment Variables** (click "Advanced" → "Environment variables"):
-   ```
-   ENVIRONMENT=production
-   PROJECT_NAME=Igisubizo Muhinzi API
-   VERSION=1.0.0
-   BACKEND_CORS_ORIGINS=*
-   LOG_LEVEL=INFO
-   MODEL_PATH=models/crop_model_seasonal.pkl
-   ENCODER_PATH=models/encoders_seasonal.pkl
-   CONFIDENCE_THRESHOLD=0.3
-   RATE_LIMIT_PER_MINUTE=100
-   GROQ_API_KEY=your-groq-api-key-here
-   ```
-
-7. **Select Instance**:
-   - **Type**: Nano (512MB) - Free tier
-   - **Region**: Frankfurt or Singapore (closest to Rwanda)
-
-8. **Click "Deploy"**
-
-### 1.3 Get Your API URL
-After deployment (2-3 minutes), you'll get a URL like:
-```
-https://igisubizo-muhinzi-api-YOUR-ID.koyeb.app
-```
-
-### 1.4 Test Your API
-```bash
-# Test health endpoint
-curl https://your-app.koyeb.app/api/v1/health
-
-# Should return: {"status": "healthy", ...}
+repo root/
+├── backend/        ← FastAPI app (deployed to Render)
+├── models/         ← ML model files (deployed with backend on Render)
+├── frontend/       ← Flutter app (web → Vercel, mobile → APK)
+│   └── vercel.json ← Vercel build config
+└── render.yaml     ← Render build config
 ```
 
 ---
 
-## Step 2: Build Mobile App (5 minutes)
+## Step 1: Deploy Backend + Models to Render
 
-### 2.1 Update API URL
+### Option A — Blueprint (uses render.yaml automatically)
 
-Edit `frontend/lib/core/utils/app_constants.dart`:
-```dart
-// Change this line:
-static const String apiBaseUrl = 'https://your-app.koyeb.app/api/v1';
+1. Go to https://render.com/ → **New +** → **Blueprint**
+2. Connect your GitHub repository
+3. Add the secret: `GROQ_API_KEY` → your key
+4. Click **Apply**
+
+### Option B — Manual
+
+1. **New +** → **Web Service** → Connect GitHub repo
+2. Settings:
+
+| Field | Value |
+|-------|-------|
+| Root Directory | *(leave empty — repo root)* |
+| Runtime | Python 3 |
+| Build Command | `pip install -r backend/requirements.txt` |
+| Start Command | `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+| Region | Frankfurt |
+| Instance Type | Free |
+
+3. Environment Variables:
+```
+ENVIRONMENT=production
+BACKEND_CORS_ORIGINS=*
+LOG_LEVEL=INFO
+MODEL_PATH=models/crop_model_seasonal.pkl
+ENCODER_PATH=models/encoders_seasonal.pkl
+CONFIDENCE_THRESHOLD=0.3
+RATE_LIMIT_PER_MINUTE=100
+GROQ_API_KEY=your-groq-api-key-here
+REQUEST_TIMEOUT_SECONDS=30
+MAX_REQUEST_SIZE_KB=10
 ```
 
-### 2.2 Build Android APK
+4. Click **Create Web Service**
+
+**Test:**
+```bash
+curl https://igisubizo-muhinzi-api.onrender.com/api/v1/health
+```
+
+> Free tier sleeps after 15 min. Use UptimeRobot to ping every 5 min.
+
+---
+
+## Step 2: Deploy Frontend to Vercel
+
+The `frontend/vercel.json` already configures the build. It:
+- Installs Flutter
+- Builds the web app pointing to your Render backend
+- Serves as a single-page app
+
+### Deploy
+
+1. Go to https://vercel.com/ → **Add New Project**
+2. Import your GitHub repository
+3. Set **Root Directory** to `frontend`
+4. Vercel auto-reads `vercel.json` — no other config needed
+5. Click **Deploy**
+
+Your web app will be live at:
+```
+https://igisubizo-muhinzi.vercel.app
+```
+
+### Update CORS for Vercel domain
+
+In Render, update the `BACKEND_CORS_ORIGINS` env var:
+```
+BACKEND_CORS_ORIGINS=https://igisubizo-muhinzi.vercel.app
+```
+
+---
+
+## Step 3: Build Android APK (Mobile)
+
 ```bash
 cd frontend
-flutter build apk --release
+flutter build apk --release \
+  --dart-define=API_URL=https://igisubizo-muhinzi-api.onrender.com/api/v1
+# Output: build/app/outputs/flutter-apk/app-release.apk
 ```
 
-**Output**: `frontend/build/app/outputs/flutter-apk/app-release.apk`
-
-### 2.3 Test the APK
-- Transfer APK to Android device
-- Install and test
-- Verify it connects to your Koyeb backend
-
----
-
-## Step 3: Distribute App (5 minutes)
-
-### Option A: GitHub Releases (Easiest)
-
+Distribute via GitHub Releases:
 ```bash
-# Create release with APK
 gh release create v1.0.0 \
   frontend/build/app/outputs/flutter-apk/app-release.apk \
-  --title "Igisubizo Muhinzi v1.0.0" \
-  --notes "Initial release with Smart Consultant feature"
+  --title "Igisubizo Muhinzi v1.0.0"
 ```
-
-**Share link**: `https://github.com/YOUR_USERNAME/igisubizo-muhinzi/releases`
-
-### Option B: Firebase App Distribution (Recommended for Beta)
-
-1. **Create Firebase Project**: https://console.firebase.google.com/
-2. **Add Android App**
-3. **Install Firebase CLI**:
-```bash
-npm install -g firebase-tools
-firebase login
-```
-
-4. **Distribute**:
-```bash
-firebase appdistribution:distribute \
-  frontend/build/app/outputs/flutter-apk/app-release.apk \
-  --app YOUR_FIREBASE_APP_ID \
-  --groups testers \
-  --release-notes "Initial beta release"
-```
-
-### Option C: Google Play Store (For Production)
-
-1. **Create Play Console Account**: https://play.google.com/console ($25 one-time fee)
-2. **Build App Bundle**:
-```bash
-flutter build appbundle --release
-```
-3. **Upload** `frontend/build/app/outputs/bundle/release/app-release.aab`
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
-### Backend Issues
+**Model not found on Render**
+- Root Directory must be **empty** (repo root), not `backend`
+- Verify models are committed: `git ls-files models/`
 
-**Problem**: Model file too large for Git
-**Solution**: Use Git LFS
-```bash
-git lfs install
-git lfs track "models/*.pkl"
-git add .gitattributes
-git commit -m "Track models with Git LFS"
-git push
-```
+**Vercel build fails (Flutter not found)**
+- Vercel installs Flutter during build via `vercel.json` — no manual setup needed
+- Check build logs in Vercel dashboard
 
-**Problem**: Backend crashes on startup
-**Solution**: Check logs in Koyeb dashboard
-- Verify all environment variables are set
-- Check MODEL_PATH is correct
-- Ensure GROQ_API_KEY is valid
+**CORS errors on Vercel**
+- Update `BACKEND_CORS_ORIGINS` in Render to include your Vercel domain
 
-**Problem**: CORS errors
-**Solution**: Update CORS origins
-```
-BACKEND_CORS_ORIGINS=https://your-frontend-domain.com,*
-```
-
-### Frontend Issues
-
-**Problem**: Cannot connect to backend
-**Solution**: 
-1. Verify API URL in `app_constants.dart`
-2. Check backend is running: `curl https://your-app.koyeb.app/api/v1/health`
-3. Check CORS is enabled on backend
-
-**Problem**: APK won't install
-**Solution**:
-1. Enable "Install from Unknown Sources" on Android
-2. Rebuild with: `flutter clean && flutter build apk --release`
+**API not reachable from app**
+- Render free tier may be sleeping — first request takes ~30s
+- Set up UptimeRobot to keep it awake
 
 ---
 
-## 📊 Monitoring
+## Cost Summary
 
-### Backend Monitoring
-- **Koyeb Dashboard**: https://app.koyeb.com/
-  - View logs
-  - Monitor CPU/Memory
-  - Check request metrics
-
-### Uptime Monitoring (Free)
-- **UptimeRobot**: https://uptimerobot.com/
-  - Add your API URL
-  - Get alerts if backend goes down
-
----
-
-## 🔐 Security Checklist
-
-- [ ] Change GROQ_API_KEY to your own key
-- [ ] Set BACKEND_CORS_ORIGINS to specific domains (not `*`) in production
-- [ ] Enable HTTPS (automatic on Koyeb)
-- [ ] Set strong API_KEY_SECRET if using API key authentication
-- [ ] Review rate limits (RATE_LIMIT_PER_MINUTE)
-
----
-
-## 💰 Cost Summary
-
-| Service | Cost | Notes |
-|---------|------|-------|
-| Koyeb Backend | $0/month | Free tier (512MB RAM) |
-| GitHub | $0/month | Free for public repos |
-| Groq API | $0/month | Free tier available |
-| Firebase Distribution | $0/month | Free for testing |
-| **Total** | **$0/month** | **Completely free!** |
-
-**Optional Costs**:
-- Google Play Store: $25 one-time
-- Apple App Store: $99/year
-- Koyeb Paid Tier: $7/month (1GB RAM)
-
----
-
-## 🎯 Next Steps
-
-1. **Test thoroughly** with real users
-2. **Set up analytics** (Firebase Analytics)
-3. **Monitor errors** (Sentry or Firebase Crashlytics)
-4. **Gather feedback** and iterate
-5. **Plan for scaling** if user base grows
-
----
-
-## 📞 Need Help?
-
-- **Koyeb Support**: https://www.koyeb.com/docs
-- **Flutter Docs**: https://docs.flutter.dev/
-- **FastAPI Docs**: https://fastapi.tiangolo.com/
-
----
-
-## ✅ Deployment Verification
-
-After deployment, verify everything works:
-
-```bash
-# 1. Test health endpoint
-curl https://your-app.koyeb.app/api/v1/health
-
-# 2. Test prediction endpoint
-curl -X POST https://your-app.koyeb.app/api/v1/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "province": "Kigali City",
-    "district": "Gasabo",
-    "season": "Season A",
-    "slope": "No",
-    "seeds": "Improved seeds",
-    "inorganic_fert": 1,
-    "organic_fert": 1,
-    "used_lime": 0
-  }'
-
-# 3. Test smart consultant endpoint
-curl -X POST https://your-app.koyeb.app/api/v1/smart-consultant \
-  -H "Content-Type: application/json" \
-  -d '{
-    "province": "Kigali City",
-    "district": "Gasabo",
-    "season": "Season A",
-    "slope": "No",
-    "seeds": "Improved seeds",
-    "crop": "Maize",
-    "inorganic_fert": 1,
-    "organic_fert": 1,
-    "used_lime": 0
-  }'
-```
-
-All endpoints should return JSON responses without errors.
-
----
-
-**🎉 Congratulations! Your app is now deployed and ready for users!**
+| Service | Cost |
+|---------|------|
+| Render (free) | $0/month (sleeps after inactivity) |
+| Render (Starter) | $7/month (always on) |
+| Vercel (free) | $0/month |
+| Groq API | $0/month |
+| **Total** | **$0/month** |
