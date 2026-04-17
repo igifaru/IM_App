@@ -58,7 +58,7 @@ The `render.yaml` at the repo root configures everything automatically:
 |-------|-------|
 | Root Directory | *(empty — repo root)* |
 | Runtime | Python 3 |
-| Build Command | `pip install -r backend/requirements.txt` |
+| Build Command | `pip install -r requirements.txt` |
 | Start Command | `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
 | Region | Frankfurt |
 | Instance Type | Free |
@@ -116,7 +116,7 @@ For production (no sleep): upgrade to Render Starter ($7/month).
 
 1. https://railway.app/ → **New Project** → **Deploy from GitHub**
 2. Root directory: *(empty — repo root)*
-3. Build: `pip install -r backend/requirements.txt`
+3. Build: `pip install -r requirements.txt`
 4. Start: `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 5. Add same environment variables
 

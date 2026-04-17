@@ -47,7 +47,7 @@ repo root/
 |-------|-------|
 | Root Directory | *(leave empty — repo root)* |
 | Runtime | Python 3 |
-| Build Command | `pip install -r backend/requirements.txt` |
+| Build Command | `pip install -r requirements.txt` |
 | Start Command | `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
 | Region | Frankfurt |
 | Instance Type | Free |
